@@ -13,18 +13,13 @@ class SiteController extends Controller {
         );
         
         if ($model->save()) {
-            $host = Yii::app()->getRequest()->getHostInfo();
-            
-            $shortUrl = $host.'/'.base_convert($model->id, 10, 36);
+            header('Content-type: application/json');
+            echo json_encode(['shortUrl' => $model->getShortUrl()]);
         }
-        
-        header('Content-type: application/json');
-        echo json_encode(['shortUrl' => $shortUrl]);
     }
     
     public function actionRedirect($id) {
-        $id = base_convert($id, 36, 10);
-        $url = Yii::app()->db->createCommand("SELECT url FROM urls WHERE id=:id")->queryScalar(['id' => $id]);
+        $url = Urls::getUrl($id);
         if ($url) {
             $this->redirect($url);
         }

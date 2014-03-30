@@ -84,5 +84,15 @@ class Urls extends CActiveRecord {
     public static function model($className = __CLASS__) {
         return parent::model($className);
     }
+    
+    public function getShortUrl() {
+        $host = \Yii::app()->getRequest()->getHostInfo();
+        return $host . '/' . base_convert($this->id, 10, 36);
+    }
+    
+    public static function getUrl($id) {
+        $id = base_convert($id, 36, 10);
+        return \Yii::app()->db->createCommand("SELECT url FROM urls WHERE id=:id")->queryScalar(['id' => $id]);
+    }
 
 }
